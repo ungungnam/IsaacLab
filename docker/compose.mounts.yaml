@@ -1,0 +1,8 @@
+# docker/compose.mounts.yaml
+version: "3.9"
+
+services:
+  isaac-lab-base:
+    volumes:
+      # (필수) 내 프로젝트 코드 -> 컨테이너 /workspace 로 마운트
+      - ${HOST_WORKSPACE:-/home/uhnam/workspaces/isaac_lab/test_project}:/workspace/test_project:rw

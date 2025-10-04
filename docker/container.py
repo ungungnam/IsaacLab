@@ -118,6 +118,8 @@ def main(args: argparse.Namespace):
             ci.add_yamls += x11_yaml
             ci.environ.update(x11_envar)
         # start the container
+        if not ci.does_image_exist():
+            ci.build()
         ci.start()
     elif args.command == "enter":
         # refresh the x11 forwarding

@@ -108,8 +108,8 @@ class ContainerInterface:
         result = subprocess.run(["docker", "image", "inspect", self.image_name], capture_output=True, text=True)
         return result.returncode == 0
 
-    def start(self):
-        """Build and start the Docker container using the Docker compose command."""
+    def build(self):
+        """Build the Docker container using the Docker compose command."""
         print(
             f"[INFO] Building the docker image and starting the container '{self.container_name}' in the"
             " background...\n"
@@ -138,13 +138,19 @@ class ContainerInterface:
                 env=self.environ,
             )
 
-        # build the image for the profile
+    def start(self):
+        """Start the Docker container using the Docker compose command."""
+        print(
+            f"[INFO] Starting the container '{self.container_name}' in the background...\n"
+        )
+
+        # Start the container for the profile
         subprocess.run(
             ["docker", "compose"]
             + self.add_yamls
             + self.add_profiles
             + self.add_env_files
-            + ["up", "--detach", "--build", "--remove-orphans"],
+            + ["up", "--detach", "--remove-orphans"],
             check=False,
             cwd=self.context_dir,
             env=self.environ,

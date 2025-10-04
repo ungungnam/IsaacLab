@@ -189,7 +189,7 @@ extract_isaacsim_exe() {
     # obtain the isaac sim path
     local isaac_path=$(extract_isaacsim_path)
     # isaac sim executable to use
-    local isaacsim_exe=${isaac_path}/isaac-sim.sh
+    local isaacsim_exe=${isaac_path}/isaac-sim.streaming.sh
     # check if there is a python path available
     if [ ! -f "${isaacsim_exe}" ]; then
         # check for installation using Isaac Sim pip
