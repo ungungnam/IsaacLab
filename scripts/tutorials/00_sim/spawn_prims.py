@@ -19,12 +19,37 @@ import argparse
 
 from isaaclab.app import AppLauncher
 
+import argparse
+
+from isaaclab.app import AppLauncher
+
 # create argparser
-parser = argparse.ArgumentParser(description="Tutorial on spawning prims into the scene.")
+parser = argparse.ArgumentParser(description="Tutorial on running IsaacSim via the AppLauncher.")
+parser.add_argument("--size", type=float, default=1.0, help="Side-length of cuboid")
+# SimulationApp arguments https://docs.omniverse.nvidia.com/py/isaacsim/source/isaacsim.simulation_app/docs/index.html?highlight=simulationapp#isaacsim.simulation_app.SimulationApp
+parser.add_argument(
+    "--width", type=int, default=1280, help="Width of the viewport and generated images. Defaults to 1280"
+)
+parser.add_argument(
+    "--height", type=int, default=720, help="Height of the viewport and generated images. Defaults to 720"
+)
+
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
 # parse the arguments
 args_cli = parser.parse_args()
+
+# --- 기본 실행 모드 강제: Headless + WebRTC(private) + 카메라/렌더 on + GPU ---
+# 주의: livestream은 AppLauncher가 환경변수 또는 인자로만 읽으니, parse 후에 덮어써서 전달
+if getattr(args_cli, "livestream", -1) == -1:
+    args_cli.livestream = 2          # 0: 끔, 1: public(NVCF), 2: private(로컬)
+if not getattr(args_cli, "headless", False):
+    args_cli.headless = True         # WebRTC면 어차피 headless로 강제되지만 명시
+if not getattr(args_cli, "enable_cameras", False):
+    args_cli.enable_cameras = True   # 렌더/스트리밍 파이프라인 활성
+if not getattr(args_cli, "device", None):
+    args_cli.device = "cuda:0"       # 필요 시 "cpu"로 변경 가능
+
 # launch omniverse app
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
@@ -107,6 +132,7 @@ def main():
     while simulation_app.is_running():
         # perform step
         sim.step()
+        print("[INFO]scene stepping...")
 
 
 if __name__ == "__main__":
